@@ -42,6 +42,14 @@ else:
 for road in roads:
     road.get_data()
 
+SIM_DURATION = input("Enter simulation duration in seconds (or press Enter for infinite): ").strip()
+if SIM_DURATION.isdigit():
+    SIM_DURATION = int(SIM_DURATION) * 1000  # Convert to milliseconds
+    print(f"Simulation will run for {SIM_DURATION / 1000} seconds.")
+else:
+    SIM_DURATION = None
+    print("Simulation will run for a looong time.")
+
 def draw(screen, roads):
     window.blit(pygame.image.load("imgs/bg.png"), (0, 0))
     for road in roads:
@@ -78,6 +86,7 @@ for road in roads:
 switching_signals = False
 switching_1 = False
 
+sim_start_time = time.time()
 while True:
     clock.tick(FPS)
 
@@ -86,6 +95,11 @@ while True:
             pygame.quit()
             My_Guy.open_data_file()
             exit()
+    
+    if SIM_DURATION and (time.time() - sim_start_time) * 1000 >= SIM_DURATION:
+        pygame.quit()
+        My_Guy.open_data_file()
+        exit()
 
     if My_Guy.calculate_switch() and not switching_signals:
         for signal in signals:
