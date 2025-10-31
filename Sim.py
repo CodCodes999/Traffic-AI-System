@@ -1,4 +1,6 @@
 import pygame
+import time
+import json
 from Classes import *
 
 FPS = 10
@@ -87,6 +89,28 @@ switching_signals = False
 switching_1 = False
 
 sim_start_time = time.time()
+
+runtime_data = {
+    "AI_Type": "Accurate" if isinstance(My_Guy, AIAccurate) else "Inaccurate",
+    "Road_Data": {},
+    "Simulation_Duration_s": None,
+    "Start_Timestamp": sim_start_time
+}
+
+for road in roads:
+    runtime_data["Road_Data"][road.dir] = {
+        "Initial_Cars": road.init_num_cars,
+        "Car_Spawn_Rate": road.car_spawn_rate,
+        "Turning_Distribution": {
+            "Left": road.dirs_to_turn.count('left'),
+            "Forward": road.dirs_to_turn.count('forward'),
+            "Right": road.dirs_to_turn.count('right')
+        }
+    }
+
+with open(f"Runtime Data {My_Guy.i}.json", "w") as f:
+    json.dump(runtime_data, f, indent=4)
+
 while True:
     clock.tick(FPS)
 
